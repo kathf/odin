@@ -34,7 +34,7 @@ function setUpMoveListeners() {
 
 var game = {
   start : function() {
-    setInterval(snake.move(), 500);
+    setInterval(snake.move, 1000);
   }
 }
 
