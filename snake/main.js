@@ -28,7 +28,25 @@ var snake = {
   },
   bodyPositions : [[20,20]],
   move : function() {
+    console.log("moving")
+    switch (snake.direction) {
+      case 'right':
+        snake.headPosition[1] += 1;
+        break;
+      case 'left':
+        snake.headPosition[1] -= 1;
+        break;
+      case 'up':
+        snake.headPosition[0] -= 1;
+        break;
+      case 'down':
+        snake.headPosition[0] += 1;
+        break;
+    }
+    snake.render();
   }
+}
+
 function setUpMoveListeners() {
   $(document).keydown(function(event){
     snake.direction = event.key.substring(5, event.key.length).toLowerCase();
