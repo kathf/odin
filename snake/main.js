@@ -16,11 +16,14 @@ function renderGrid(size) {
 var snake = {
   initialPosition : function(gridSize) {
     var middle = Math.floor( gridSize / 2 );
-    this.headPosition(middle,middle);
-    this.direction = 'right'
+    snake.headPosition = [middle,middle];
+    snake.direction = 'right';
   },
-  headPosition : function(x,y) {
+  render : function() {
+    var x = snake.headPosition[0];
+    var y = snake.headPosition[1];
     var idName = "#" + x + "-" + y;
+    $('#grid td').removeClass('snakeHead');
     $(idName).addClass('snakeHead');
   },
   bodyPositions : [[20,20]],
@@ -43,6 +46,7 @@ $(document).ready(function(){
   renderGrid(gridSize);
   setUpMoveListeners();
   snake.initialPosition(gridSize);
+  snake.render();
   game.start();
 });
 
