@@ -26,6 +26,10 @@ var snake = {
   bodyPositions : [[20,20]],
   move : function() {
   }
+function setUpMoveListeners() {
+  $(document).keydown(function(event){
+    snake.direction = event.key.substring(5, event.key.length).toLowerCase();
+  })
 }
 
 var game = {
@@ -37,12 +41,9 @@ var game = {
 $(document).ready(function(){
   var gridSize = 20;
   renderGrid(gridSize);
+  setUpMoveListeners();
   snake.initialPosition(gridSize);
   game.start();
-  $(document).keydown(function(event){
-    snake.direction = event.key.substring(5, event.key.length).toLowerCase();
-    console.log(event.key.substring(5, event.key.length).toLowerCase())
-  });
 });
 
 
