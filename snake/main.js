@@ -1,10 +1,9 @@
-var grid = {
-  render : function() {
+function renderGrid(size) {
     var table = $('<table></table>');
 
-    for(i=0; i<40; i++){
+  for(i=0; i<size; i++){
       var row = $('<tr></tr>');
-      for(j=0; j< 40; j++){
+    for(j=0; j< size; j++){
         var col = $('<td class="cell" id ="' + i + '-' + j + '"></td>');
         row.append(col);
       };
@@ -37,7 +36,8 @@ var game = {
 }
 
 $(document).ready(function(){
-  grid.render();
+  var gridSize = 20;
+  renderGrid(gridSize);
   game.start();
   $(document).keydown(function(event){
     snake.direction = event.key.substring(5, event.key.length).toLowerCase();
