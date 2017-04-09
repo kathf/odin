@@ -14,15 +14,15 @@ var grid = {
     $('#grid').append(table);
   },
   renderFood: function() {
-    var max = grid.size;
-    var x = Math.floor(Math.random() * (max));
-    var y = Math.floor(Math.random() * (max));
-    renderOnGrid(x, y, 'food');
+    var x = Math.floor(Math.random() * (grid.size));
+    var y = Math.floor(Math.random() * (grid.size));
+    grid.foodPosition = [x,y];
+    renderOnGrid(grid.foodPosition, 'food');
   }
 };
 
-function renderOnGrid(x, y, classToRender) {
-  var idName = "#" + x + "-" + y;
+function renderOnGrid(position, classToRender) {
+  var idName = "#" + position[0] + "-" + position[1];
   $('#grid td').removeClass(classToRender);
   $(idName).addClass(classToRender);
 }
@@ -35,9 +35,7 @@ var snake = {
     snake.render();
   },
   render: function() {
-    var x = snake.headPosition[0];
-    var y = snake.headPosition[1];
-    renderOnGrid(x, y, 'snakeHead');
+    renderOnGrid(snake.headPosition, 'snakeHead');
   },
   bodyPositions: [[20,20]],
   move: function() {
@@ -64,6 +62,12 @@ var snake = {
       outOfBounds = true;
     }
     return outOfBounds;
+  },
+  eatsFood: function() {
+    return snake.headPosition == grid.foodPosition
+  },
+  grow: function() {
+
   }
 };
 
@@ -75,15 +79,16 @@ function setUpMoveListeners() {
 
 var game = {
   start: function() {
-    game.identifier = setInterval(game.step, 1000);
+    game.identifier = setInterval(game.step, 500);
   },
   step: function() {
     snake.move();
     if ( snake.isOutOfBounds() ) {
       game.over();
-    } else {
-      snake.render();
+    } else if ( snake.eatsFood() ) {
+      snake.grow();
     }
+    snake.render();
   },
   over: function() {
     var gameOver = $("<div id=gameOver> Game Over </div>");
