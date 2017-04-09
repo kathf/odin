@@ -12,8 +12,20 @@ var grid = {
       table.append(row);
     }
     $('#grid').append(table);
+  },
+  renderFood: function() {
+    var max = grid.size;
+    var x = Math.floor(Math.random() * (max));
+    var y = Math.floor(Math.random() * (max));
+    renderOnGrid(x, y, 'food');
   }
 };
+
+function renderOnGrid(x, y, classToRender) {
+  var idName = "#" + x + "-" + y;
+  $('#grid td').removeClass(classToRender);
+  $(idName).addClass(classToRender);
+}
 
 var snake = {
   initialPosition: function() {
@@ -25,9 +37,7 @@ var snake = {
   render: function() {
     var x = snake.headPosition[0];
     var y = snake.headPosition[1];
-    var idName = "#" + x + "-" + y;
-    $('#grid td').removeClass('snakeHead');
-    $(idName).addClass('snakeHead');
+    renderOnGrid(x, y, 'snakeHead');
   },
   bodyPositions: [[20,20]],
   move: function() {
@@ -85,6 +95,7 @@ var game = {
 $(document).ready(function(){
   grid.render();
   setUpMoveListeners();
+  grid.renderFood();
   snake.initialPosition();
   game.start();
 });

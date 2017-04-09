@@ -21,3 +21,8 @@ td {
   width: 482px;
   line-height: 470px;
 }
+
+.food {
+  background-image: url("food.png");
+  background-size: cover;
+}
