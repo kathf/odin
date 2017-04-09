@@ -38,6 +38,10 @@ var snake = {
   },
   render: function() {
     renderOnGrid(snake.headPosition, 'snakeHead');
+    renderOnGrid(snake.bodyCoordinates, 'snakeBody');
+  },
+  renderFlash: function() {
+    renderOnGrid(snake.headPosition, 'flash');
   },
   bodyCoordinates: [],
   move: function() {
@@ -66,14 +70,10 @@ var snake = {
     return outOfBounds;
   },
   eatsFood: function() {
-    if (snake.headPosition == grid.foodPosition) {
-      snake.growNextMove = true;
-    }
+    return (snake.headPosition.x == grid.foodPosition.x) && (snake.headPosition.y == grid.foodPosition.y);
   },
   growNextMove: false,
   advanceCoords: function(xOrY, increment) {
-    // advance the snake head
-    snake.headPosition[xOrY] += increment;
 
     // advance the snake body coordinates
     var newBodyCoords = snake.bodyCoordinates.map(function(){
@@ -85,10 +85,20 @@ var snake = {
       // reset growNextMove to false for next step
       snake.growNextMove = false;
 
-      // add a coord at the end of the body
-      lastCoord = snake.bodyCoordinates.pop();
+      var lastCoord;
+
+      // get a coord at the end of the body
+      if (snake.bodyCoordinates.length) {
+        lastCoord = snake.bodyCoordinates.pop();
+      } else {
+        lastCoord = snake.headPosition;
+      }
+
       newBodyCoords.push(lastCoord);
     }
+
+    // advance the snake head
+    snake.headPosition[xOrY] += increment;
 
     // assign the new body coordinates
     snake.bodyCoordinates = newBodyCoords;
@@ -107,11 +117,16 @@ var game = {
   },
   step: function() {
     snake.move();
+
     if ( snake.isOutOfBounds() ) {
       game.over();
-    } else {
-      snake.render();
+    } else if ( snake.eatsFood() ) {
+      snake.growNextMove = true;
+      snake.renderFlash();
+      grid.renderFood();
     }
+
+    snake.render();
   },
   over: function() {
     var gameOver = $("<div id=gameOver> Game Over </div>");

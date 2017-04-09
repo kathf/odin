@@ -4,8 +4,16 @@ td {
   width: 20px;
 }
 
+.snakeBody {
+  background-color: aquamarine;
+}
+
 .snakeHead {
   background-color: cyan;
+}
+
+.snakeHead.flash {
+  background-color: red;
 }
 
 #grid {
