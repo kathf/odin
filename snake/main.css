@@ -7,3 +7,17 @@ td {
 .snakeHead {
   background-color: cyan;
 }
+
+#grid {
+  width: 482px;
+  margin: 50px auto;
+}
+
+#gameOver {
+  font-family: monospace;
+  font-size: 40px;
+  text-align: center;
+  position: absolute;
+  width: 482px;
+  line-height: 470px;
+}
