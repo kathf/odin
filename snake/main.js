@@ -75,9 +75,9 @@ function setUpMoveListeners() {
 
 var game = {
   start: function() {
-    game.identifier = setInterval(game.turn, 1000);
+    game.identifier = setInterval(game.step, 1000);
   },
-  turn: function() {
+  step: function() {
     snake.move();
     if ( snake.isOutOfBounds() ) {
       game.over();
