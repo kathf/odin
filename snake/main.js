@@ -1,12 +1,13 @@
 var grid = {
   size: 20,
+  foodPosition: {},
   render: function () {
     var table = $('<table></table>');
 
     for ( i=0; i<grid.size; i++ ) {
       var row = $('<tr></tr>');
       for( j=0; j< grid.size; j++ ){
-        var col = $('<td class="cell" id ="' + i + '-' + j + '"></td>');
+        var col = $('<td class="cell" id ="' + j + '-' + i + '"></td>');
         row.append(col);
       }
       table.append(row);
@@ -14,60 +15,83 @@ var grid = {
     $('#grid').append(table);
   },
   renderFood: function() {
-    var x = Math.floor(Math.random() * (grid.size));
-    var y = Math.floor(Math.random() * (grid.size));
-    grid.foodPosition = [x,y];
+    grid.foodPosition.x = Math.floor(Math.random() * (grid.size));
+    grid.foodPosition.y = Math.floor(Math.random() * (grid.size));
     renderOnGrid(grid.foodPosition, 'food');
   }
 };
 
-function renderOnGrid(position, classToRender) {
-  var idName = "#" + position[0] + "-" + position[1];
+function renderOnGrid(coords, classToRender) {
+  var idName = "#" + coords.x + "-" + coords.y;
   $('#grid td').removeClass(classToRender);
   $(idName).addClass(classToRender);
 }
 
 var snake = {
+  headPosition: {},
   initialPosition: function() {
     var middle = Math.floor( grid.size / 2 );
-    snake.headPosition = [middle,middle];
+    snake.headPosition.x = middle;
+    snake.headPosition.y = middle;
     snake.direction = 'right';
     snake.render();
   },
   render: function() {
     renderOnGrid(snake.headPosition, 'snakeHead');
   },
-  bodyCoordinates: [[20,20]],
+  bodyCoordinates: [],
   move: function() {
     switch (snake.direction) {
       case 'right':
-        snake.headPosition[1] += 1;
+        snake.advanceCoords('x', 1);
         break;
       case 'left':
-        snake.headPosition[1] -= 1;
+        snake.advanceCoords('x', -1);
         break;
       case 'up':
-        snake.headPosition[0] -= 1;
+        snake.advanceCoords('y', -1);
         break;
       case 'down':
-        snake.headPosition[0] += 1;
+        snake.advanceCoords('y', 1);
         break;
     }
   },
   isOutOfBounds: function() {
     var outOfBounds = false;
-    var x = snake.headPosition[1];
-    var y = snake.headPosition[0];
+    var x = snake.headPosition.x;
+    var y = snake.headPosition.y;
     if (x < 0 || x > grid.size || y < 0 || y > grid.size) {
       outOfBounds = true;
     }
     return outOfBounds;
   },
   eatsFood: function() {
-    return snake.headPosition == grid.foodPosition
+    if (snake.headPosition == grid.foodPosition) {
+      snake.growNextMove = true;
+    }
   },
-  grow: function() {
+  growNextMove: false,
+  advanceCoords: function(xOrY, increment) {
+    // advance the snake head
+    snake.headPosition[xOrY] += increment;
 
+    // advance the snake body coordinates
+    var newBodyCoords = snake.bodyCoordinates.map(function(){
+      this[xOrY] += increment;
+    });
+
+    // If the growNextMove boolean is true
+    if (!!snake.growNextMove) {
+      // reset growNextMove to false for next step
+      snake.growNextMove = false;
+
+      // add a coord at the end of the body
+      lastCoord = snake.bodyCoordinates.pop();
+      newBodyCoords.push(lastCoord);
+    }
+
+    // assign the new body coordinates
+    snake.bodyCoordinates = newBodyCoords;
   }
 };
 
@@ -85,10 +109,9 @@ var game = {
     snake.move();
     if ( snake.isOutOfBounds() ) {
       game.over();
-    } else if ( snake.eatsFood() ) {
-      snake.grow();
+    } else {
+      snake.render();
     }
-    snake.render();
   },
   over: function() {
     var gameOver = $("<div id=gameOver> Game Over </div>");
