@@ -37,7 +37,7 @@ var snake = {
   render: function() {
     renderOnGrid(snake.headPosition, 'snakeHead');
   },
-  bodyPositions: [[20,20]],
+  bodyCoordinates: [[20,20]],
   move: function() {
     switch (snake.direction) {
       case 'right':
