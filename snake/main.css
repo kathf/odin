@@ -1,3 +1,7 @@
+body {
+  font-family: monospace;
+}
+
 td {
   background-color: lavenderblush;
   height: 20px;
@@ -22,7 +26,6 @@ td {
 }
 
 #gameOver {
-  font-family: monospace;
   font-size: 40px;
   text-align: center;
   position: absolute;

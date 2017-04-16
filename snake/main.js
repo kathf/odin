@@ -101,6 +101,12 @@ var snake = {
 
     // reset growNextMove to false for next step
     snake.growNextMove = false;
+  },
+  speed: 500,
+  speedUp: function() {
+    snake.speed = snake.speed / 2;
+    clearInterval(game.identifier);
+    game.start();
   }
 };
 
@@ -111,8 +117,11 @@ function setUpMoveListeners() {
 }
 
 var game = {
+  renderPoints: function() {
+    $('#grid').append('<h3>Points: <span id=points>0</span></h3>');
+  },
   start: function() {
-    game.identifier = setInterval(game.step, 500);
+    game.identifier = setInterval(game.step, snake.speed);
   },
   step: function() {
     snake.move();
@@ -121,6 +130,8 @@ var game = {
       game.over();
     } else if ( snake.eatsFood() ) {
       snake.growNextMove = true;
+      game.gainPoints();
+      snake.speedUp();
       game.startAgain();
     }
 
@@ -134,6 +145,11 @@ var game = {
     var gameOver = $("<div id=gameOver> Game Over </div>");
     $('#grid').prepend(gameOver);
     clearInterval(game.identifier);
+  },
+  points: 0,
+  gainPoints: function() {
+    game.points += 10;
+    $('#grid #points').html(game.points);
   }
 };
 
@@ -142,6 +158,7 @@ $(document).ready(function(){
   setUpMoveListeners();
   grid.renderFood();
   snake.initialPosition();
+  game.renderPoints();
   game.start();
 });
 
