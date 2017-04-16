@@ -15,15 +15,18 @@ var grid = {
     $('#grid').append(table);
   },
   renderFood: function() {
+    grid.remove('food');
     grid.foodPosition.x = Math.floor(Math.random() * (grid.size));
     grid.foodPosition.y = Math.floor(Math.random() * (grid.size));
     renderOnGrid(grid.foodPosition, 'food');
+  },
+  remove: function(classToRender) {
+    $('#grid td').removeClass(classToRender);
   }
 };
 
 function renderOnGrid(coords, classToRender) {
   var idName = "#" + coords.x + "-" + coords.y;
-  $('#grid td').removeClass(classToRender);
   $(idName).addClass(classToRender);
 }
 
@@ -37,8 +40,12 @@ var snake = {
     snake.render();
   },
   render: function() {
+    grid.remove('snakeHead');
+    grid.remove('snakeBody');
     renderOnGrid(snake.headPosition, 'snakeHead');
-    renderOnGrid(snake.bodyCoordinates, 'snakeBody');
+    snake.bodyCoordinates.forEach(function(coords,_) {
+      renderOnGrid(coords, 'snakeBody');
+    });
   },
   renderFlash: function() {
     renderOnGrid(snake.headPosition, 'flash');
@@ -73,35 +80,27 @@ var snake = {
     return (snake.headPosition.x == grid.foodPosition.x) && (snake.headPosition.y == grid.foodPosition.y);
   },
   growNextMove: false,
+  getHeadPosition: function() {
+    return snake.headPosition;
+  },
   advanceCoords: function(xOrY, increment) {
+    // advance the snake body by adding the headPosition to the body coords
+    var head = {
+      x: snake.headPosition.x,
+      y: snake.headPosition.y
+    };
+    snake.bodyCoordinates.unshift(head);
 
-    // advance the snake body coordinates
-    var newBodyCoords = snake.bodyCoordinates.map(function(){
-      this[xOrY] += increment;
-    });
-
-    // If the growNextMove boolean is true
-    if (!!snake.growNextMove) {
-      // reset growNextMove to false for next step
-      snake.growNextMove = false;
-
-      var lastCoord;
-
-      // get a coord at the end of the body
-      if (snake.bodyCoordinates.length) {
-        lastCoord = snake.bodyCoordinates.pop();
-      } else {
-        lastCoord = snake.headPosition;
-      }
-
-      newBodyCoords.push(lastCoord);
+    // Remove the last unless the snake needs to grow this turn
+    if (!snake.growNextMove) {
+      snake.bodyCoordinates.pop();
     }
 
     // advance the snake head
     snake.headPosition[xOrY] += increment;
 
-    // assign the new body coordinates
-    snake.bodyCoordinates = newBodyCoords;
+    // reset growNextMove to false for next step
+    snake.growNextMove = false;
   }
 };
 
@@ -122,11 +121,14 @@ var game = {
       game.over();
     } else if ( snake.eatsFood() ) {
       snake.growNextMove = true;
-      snake.renderFlash();
-      grid.renderFood();
+      game.startAgain();
     }
 
     snake.render();
+  },
+  startAgain: function() {
+    snake.renderFlash();
+    grid.renderFood();
   },
   over: function() {
     var gameOver = $("<div id=gameOver> Game Over </div>");
