@@ -1,0 +1,13 @@
+img#owl {
+  width: 200px;
+  height: 200px;
+}
+
+#tabHeadings h3 {
+	padding: 10px;
+	display: inline-block;
+}
+
+.hidden {
+	display: none;
+}
